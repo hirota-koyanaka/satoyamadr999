@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flutter
+login_app/.dart_tool/
+login_app/.flutter-plugins
+login_app/.flutter-plugins-dependencies
+login_app/.packages
+login_app/.pub-cache/
+login_app/.pub/
+login_app/build/
+login_app/.flutter-plugins-dependencies.lock
+login_app/*.iml
+login_app/.idea/
+login_app/.vscode/
+login_app/*.lock
+login_app/android/.gradle/
+login_app/android/local.properties
+login_app/android/app/local.properties
+login_app/ios/Pods/
+login_app/ios/.symlinks/
+login_app/ios/Flutter/Flutter.framework
+login_app/ios/Flutter/Flutter.podspec
+login_app/ios/Flutter/ephemeral/
+login_app/ios/.generated/
+login_app/ios/Runner.xcworkspace/xcuserdata/
+login_app/ios/Runner.xcodeproj/xcuserdata/
+login_app/ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+login_app/macos/Flutter/ephemeral/
+login_app/windows/flutter/ephemeral/
+login_app/linux/flutter/ephemeral/
+
+# Supabase
+.supabase/
+
