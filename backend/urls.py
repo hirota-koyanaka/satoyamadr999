@@ -16,8 +16,28 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+from django.conf import settings
+
+def health_check(request):
+    """Railway用のヘルスチェックエンドポイント"""
+    return JsonResponse({"status": "ok"})
+
+def debug_settings(request):
+    """デバッグ用の設定確認エンドポイント（DEBUG=Trueの場合のみ）"""
+    if not settings.DEBUG:
+        return JsonResponse({"error": "Debug mode is disabled"}, status=403)
+    
+    return JsonResponse({
+        "ALLOWED_HOSTS": settings.ALLOWED_HOSTS,
+        "CSRF_TRUSTED_ORIGINS": getattr(settings, "CSRF_TRUSTED_ORIGINS", []),
+        "RAILWAY_PUBLIC_DOMAIN": settings.ALLOWED_HOSTS if hasattr(settings, "RAILWAY_PUBLIC_DOMAIN") else None,
+    })
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/accounts/", include("accounts.urls")),
+    path("health/", health_check, name="health_check"),
+    path("debug/settings/", debug_settings, name="debug_settings"),
+    path("", health_check, name="root_health_check"),
 ]

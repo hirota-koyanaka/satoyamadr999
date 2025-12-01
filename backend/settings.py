@@ -33,6 +33,33 @@ ALLOWED_HOSTS = config(
     default="*"
 ).split(",") if config("ALLOWED_HOSTS", default="*") != "*" else ["*"]
 
+# Railwayのドメインを動的に追加
+import os
+railway_domain = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if railway_domain:
+    ALLOWED_HOSTS.append(railway_domain)
+
+# CSRF設定（HTTPSを使用する場合に必要）
+CSRF_TRUSTED_ORIGINS = []
+
+# Railwayのドメインを確実に追加
+if railway_domain:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{railway_domain}")
+
+# 環境変数から直接読み込む（decoupleのconfig()に依存しない）
+csrf_origins_env = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
+if csrf_origins_env:
+    # カンマ区切りの値を分割して追加
+    origins_list = [origin.strip() for origin in csrf_origins_env.split(",") if origin.strip()]
+    CSRF_TRUSTED_ORIGINS.extend(origins_list)
+
+# 重複を削除
+CSRF_TRUSTED_ORIGINS = list(set(CSRF_TRUSTED_ORIGINS))
+
+# デバッグ用: CSRF_TRUSTED_ORIGINSが空の場合は、Railwayのデフォルトドメインパターンを追加
+if not CSRF_TRUSTED_ORIGINS and railway_domain:
+    CSRF_TRUSTED_ORIGINS = [f"https://{railway_domain}"]
+
 
 # Application definition
 
@@ -53,6 +80,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # WhiteNoise for static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",  # CORS middleware
     "django.middleware.common.CommonMiddleware",
@@ -150,6 +178,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise settings for static files
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
